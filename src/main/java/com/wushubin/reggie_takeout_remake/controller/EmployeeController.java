@@ -13,6 +13,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 /**
  * @ClassName: EmployeeController
@@ -79,6 +80,13 @@ public class EmployeeController {
         return R.success("退出成功");
     }
 
+    /**
+     * 分页查询员工数据
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name){
         //构造分页构造器
@@ -97,6 +105,57 @@ public class EmployeeController {
         return R.success(pageInfo);
     }
 
+
+    /**
+     * 新增员工数据
+     * @param request
+     * @param employee
+     * @return
+     */
+    @PostMapping
+    public R<String> save(HttpServletRequest request, @RequestBody Employee employee){
+        log.info("新增的员工数据为：" + employee.toString());
+        //1、为员工添加默认密码
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+
+        //2、设置员工信息的创建时间，创建人等信息
+        Long id = (Long) request.getSession().getAttribute("employee");
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setCreateUser(id);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(id);
+
+        employeeService.save(employee);
+
+        return R.success("员工信息新增成功！");
+    }
+
+    /**
+     * 修改员工状态信息
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public R<String> updateStatus(HttpServletRequest request, @RequestBody Employee employee){
+        Long empID = (Long)request.getSession().getAttribute("employee");
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(empID);
+        employeeService.updateById(employee);
+        return R.success("修改成功");
+    }
+
+    /**
+     * 根据用户ID查询数据
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable Long id){
+        Employee employee = employeeService.getById(id);
+        if (employee == null)
+            return R.error("查无此人！");
+        return R.success(employee);
+    }
 
 
 }

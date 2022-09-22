@@ -12,4 +12,6 @@ import com.wushubin.reggie_takeout_remake.entity.Category;
  * @Date: 2022/9/21 15:32
  */
 public interface CategoryService extends IService<Category> {
+
+    void remove(Long id);
 }

@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @ClassName: CategoryController
  * @Description: TODO
@@ -67,8 +69,22 @@ public class CategoryController {
      */
     @DeleteMapping
     public R<String> deleteById(Long id){
-        categoryService.removeById(id);
+        categoryService.remove(id);
         return R.success("删除成功");
+    }
+
+    /**
+     * 查询可用的菜品分类
+     * @param category
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Category>> list(Category category){
+        LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
+        qw.eq(category.getType() != null, Category::getType,category.getType());
+        List<Category> list = categoryService.list(qw);
+
+        return R.success(list);
     }
 
 }

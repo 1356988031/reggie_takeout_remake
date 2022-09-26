@@ -47,7 +47,7 @@
             data(){
                 return {
                     form:{
-                        phone:'',
+                        phone:'18250930932',
                         code:''
                     },
                     msgFlag:false,
@@ -63,7 +63,8 @@
                     const regex = /^(13[0-9]{9})|(15[0-9]{9})|(17[0-9]{9})|(18[0-9]{9})|(19[0-9]{9})$/;
                     if (regex.test(this.form.phone)) {
                         this.msgFlag = false
-                        //this.form.code = (Math.random()*1000000).toFixed(0)
+                        //上线后注释下面那行
+                        this.form.code = '1234'
                         sendMsgApi({phone:this.form.phone})
                     }else{
                         this.msgFlag = true

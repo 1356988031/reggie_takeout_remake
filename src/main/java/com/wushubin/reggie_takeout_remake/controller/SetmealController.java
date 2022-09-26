@@ -119,10 +119,30 @@ public class SetmealController {
         return R.success("修改成功");
     }
 
+    /**
+     * 批量删除套餐信息
+     * @param ids
+     * @return
+     */
     @DeleteMapping
     public R<String> removeByIds(@RequestParam List<Long> ids){
         setmealService.removeWithDish(ids);
         return R.success("删除成功");
     }
+
+    /**
+     * 获取指定套餐的信息
+     * @param categoryId
+     * @param status
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(Long categoryId, Integer status){
+        LambdaQueryWrapper<Setmeal> qw = new LambdaQueryWrapper<>();
+        qw.eq(Setmeal::getCategoryId, categoryId).eq(Setmeal::getStatus,status);
+        List<Setmeal> setmeals = setmealService.list(qw);
+        return R.success(setmeals);
+    }
+
 
 }
